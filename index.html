@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameVault</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js" defer></script>
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">🎮 GameVault</div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#games">Games</a></li>
+                    <li><a href="#stats">Stats</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-container">
+            <h1>Welcome to GameVault</h1>
+            <p>A collection of fun brain games to test your memory and skills</p>
+            <a href="#games" class="cta-button">Start Playing</a>
+        </div>
+    </section>
+
+    <!-- Games Section -->
+    <section class="games-section" id="games">
+        <h2 class="section-title">Available Games</h2>
+        <p class="section-subtitle">Choose your challenge and test your skills</p>
+
+        <div class="games-grid">
+            <!-- Memory Flip Card Game -->
+            <div class="game-card">
+                <div class="game-icon">🧠</div>
+                <h3 class="game-title">Memory Flip Cards</h3>
+                <p class="game-description">Test your memory by matching pairs of cards. Choose from different themes
+                    and difficulty levels.</p>
+                <button class="play-button" onclick="playGame('memory')">Play Now</button>
+            </div>
+
+            <!-- Word Association Game -->
+            <div class="game-card">
+                <div class="game-icon">💭</div>
+                <h3 class="game-title">Word Association</h3>
+                <p class="game-description">Create amazing word chains by connecting related words. Challenge your
+                    vocabulary and creativity.</p>
+                <button class="play-button" onclick="playGame('word-association')">Play Now</button>
+            </div>
+
+            <!-- Coming Soon Games -->
+            <div class="game-card">
+                <div class="game-icon">🎯</div>
+                <h3 class="game-title">Tic Tac Toe</h3>
+                <p class="game-description">Classic strategy game with AI opponent. Test your strategic thinking skills.
+                </p>
+                <button class="play-button coming-soon" disabled>Coming Soon</button>
+            </div>
+
+            <div class="game-card">
+                <div class="game-icon">🔢</div>
+                <h3 class="game-title">Number Puzzle</h3>
+                <p class="game-description">Solve challenging number puzzles and mathematical brain teasers.</p>
+                <button class="play-button coming-soon" disabled>Coming Soon</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section" id="stats">
+        <div class="stats-container">
+            <h2 class="section-title">Your Gaming Stats</h2>
+            <p class="section-subtitle">Track your progress across all games</p>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalGames">0</div>
+                    <div class="stat-label">Total Games Played</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="totalScore">0</div>
+                    <div class="stat-label">Total Score</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="bestStreak">0</div>
+                    <div class="stat-label">Best Winning Streak</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="favoriteGame">-</div>
+                    <div class="stat-label">Favorite Game</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="about">
+        <p>&copy; 2025 GameVault. Challenge your mind with fun brain games!</p>
+        <p>Built with HTML, CSS, and JavaScript</p>
+    </footer>
+</body>
+
+</html>
