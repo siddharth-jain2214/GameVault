@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameVault</title>
+    <title>GameVault - Challenge Your Mind</title>
     <link rel="stylesheet" href="styles.css">
     <script src="script.js" defer></script>
 </head>
-
 <body>
     <!-- Header -->
     <header class="header">
@@ -38,14 +36,13 @@
     <section class="games-section" id="games">
         <h2 class="section-title">Available Games</h2>
         <p class="section-subtitle">Choose your challenge and test your skills</p>
-
+        
         <div class="games-grid">
             <!-- Memory Flip Card Game -->
             <div class="game-card">
                 <div class="game-icon">🧠</div>
                 <h3 class="game-title">Memory Flip Cards</h3>
-                <p class="game-description">Test your memory by matching pairs of cards. Choose from different themes
-                    and difficulty levels.</p>
+                <p class="game-description">Test your memory by matching pairs of cards. Choose from different themes and difficulty levels.</p>
                 <button class="play-button" onclick="playGame('memory')">Play Now</button>
             </div>
 
@@ -53,8 +50,7 @@
             <div class="game-card">
                 <div class="game-icon">💭</div>
                 <h3 class="game-title">Word Association</h3>
-                <p class="game-description">Create amazing word chains by connecting related words. Challenge your
-                    vocabulary and creativity.</p>
+                <p class="game-description">Create amazing word chains by connecting related words. Challenge your vocabulary and creativity.</p>
                 <button class="play-button" onclick="playGame('word-association')">Play Now</button>
             </div>
 
@@ -62,8 +58,7 @@
             <div class="game-card">
                 <div class="game-icon">🎯</div>
                 <h3 class="game-title">Tic Tac Toe</h3>
-                <p class="game-description">Classic strategy game with AI opponent. Test your strategic thinking skills.
-                </p>
+                <p class="game-description">Classic strategy game with AI opponent. Test your strategic thinking skills.</p>
                 <button class="play-button coming-soon" disabled>Coming Soon</button>
             </div>
 
@@ -81,7 +76,7 @@
         <div class="stats-container">
             <h2 class="section-title">Your Gaming Stats</h2>
             <p class="section-subtitle">Track your progress across all games</p>
-
+            
             <div class="stats-grid">
                 <div class="stat-item">
                     <div class="stat-number" id="totalGames">0</div>
@@ -108,7 +103,6 @@
         <p>&copy; 2025 GameVault. Challenge your mind with fun brain games!</p>
         <p>Built with HTML, CSS, and JavaScript</p>
     </footer>
-    
-</body>
 
+</body>
 </html>
