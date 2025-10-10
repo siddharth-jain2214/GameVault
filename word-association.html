@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Association - GameVault</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f0f1a;
+            color: #e1e5e9;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: #1a1a2e;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border-bottom: 2px solid #16213e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .back-btn {
+            background: #2a2a3e;
+            color: #e1e5e9;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-btn:hover {
+            background: #3a3a4e;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .game-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #ffffff;
+        }
+
+        /* Game Controls */
+        .controls {
+            background: #1e1e2f;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            border: 2px solid #2a2a3e;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .control-group label {
+            color: #a0a6b0;
+            font-size: 0.9rem;
+        }
+
+        .control-group select {
+            background: #2a2a3e;
+            color: #e1e5e9;
+            border: 1px solid #3a3a4e;
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .new-game-btn {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .new-game-btn:hover {
+            background: linear-gradient(45deg, #0099cc, #00d4ff);
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: #1e1e2f;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #2a2a3e;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #a0a6b0;
+            margin-top: 0.3rem;
+        }
+
+        /* Input Section */
+        .input-section {
+            background: #1e1e2f;
+            padding: 2rem;
+            border-radius: 10px;
+            border: 2px solid #2a2a3e;
+            margin-bottom: 2rem;
+        }
+
+        .word-input {
+            width: 100%;
+            padding: 1rem;
+            background: #2a2a3e;
+            color: #e1e5e9;
+            border: 2px solid #3a3a4e;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .word-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+
+        .word-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(45deg, #0099cc, #00d4ff);
+        }
+
+        .submit-btn:disabled {
+            background: #4a4a5e;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .validation-hint {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: #2a2a3e;
+            border-radius: 6px;
+            border-left: 4px solid #00d4ff;
+            font-size: 0.9rem;
+            color: #a0a6b0;
+        }
+
+        /* Word Chain Display */
+        .chain-section {
+            background: #1e1e2f;
+            padding: 2rem;
+            border-radius: 10px;
+            border: 2px solid #2a2a3e;
+            margin-bottom: 2rem;
+        }
+
+        .chain-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .word-chain {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        .word-bubble {
+            background: #2a2a3e;
+            color: #00d4ff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 500;
+            border: 2px solid #3a3a4e;
+        }
+
+        .word-bubble.invalid {
+            background: #3a2a2e;
+            color: #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .arrow {
+            color: #a0a6b0;
+            font-weight: bold;
+        }
+
+        /* Game Message */
+        .game-message {
+            text-align: center;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .game-message.show {
+            display: block;
+        }
+
+        .game-message.success {
+            background: #1a3a2e;
+            color: #00ff88;
+            border: 2px solid #00ff88;
+        }
+
+        .game-message.error {
+            background: #3a1a1e;
+            color: #ff6b6b;
+            border: 2px solid #ff6b6b;
+        }
+
+        .game-message.info {
+            background: #1a2a3e;
+            color: #00d4ff;
+            border: 2px solid #00d4ff;
+        }
+
+        /* Start Screen */
+        .start-screen {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        .start-screen h2 {
+            color: #00d4ff;
+            margin-bottom: 1rem;
+        }
+
+        .start-screen p {
+            color: #a0a6b0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-bar {
+                gap: 0.5rem;
+            }
+
+            .stat {
+                padding: 0.7rem 1rem;
+                min-width: 80px;
+            }
+
+            .stat-value {
+                font-size: 1.4rem;
+            }
+
+            .word-chain {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">🎮 GameVault</div>
+        <a href="index.html" class="back-btn">← Back to Home</a>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <h1 class="game-title">💭 Word Association Chain</h1>
+
+        <!-- Game Controls -->
+        <div class="controls">
+            <div class="controls-row">
+                <div class="control-group">
+                    <label>Difficulty:</label>
+                    <select id="difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="medium">Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Mode:</label>
+                    <select id="gameMode">
+                        <option value="endless">Endless</option>
+                        <option value="timed">Timed (60s)</option>
+                    </select>
+                </div>
+                <button class="new-game-btn" onclick="wordGame.startNewGame()">New Game</button>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value" id="scoreCount">0</div>
+                <div class="stat-label">Score</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="chainCount">0</div>
+                <div class="stat-label">Chain Length</div>
+            </div>
+            <div class="stat" id="timerStat" style="display: none;">
+                <div class="stat-value" id="timerCount">60</div>
+                <div class="stat-label">Time Left</div>
+            </div>
+        </div>
+
+        <!-- Game Message -->
+        <div id="gameMessage" class="game-message"></div>
+
+        <!-- Input Section -->
+        <div class="input-section" id="inputSection" style="display: none;">
+            <input 
+                type="text" 
+                id="wordInput" 
+                class="word-input" 
+                placeholder="Type your word here..."
+                disabled
+            >
+            <button class="submit-btn" id="submitBtn" onclick="wordGame.submitWord()" disabled>
+                Add Word
+            </button>
+            <div class="validation-hint" id="validationHint"></div>
+        </div>
+
+        <!-- Word Chain Display -->
+        <div class="chain-section">
+            <div class="chain-title">Current Word Chain</div>
+            <div class="word-chain" id="wordChain">
+                <div class="start-screen">
+                    <h2>Ready to Build Word Chains?</h2>
+                    <p>Click "New Game" and start connecting words!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Constructor function for Word
+        function Word(text, isValid, reason) {
+            this.text = text.toLowerCase();
+            this.originalText = text;
+            this.isValid = isValid;
+            this.reason = reason;
+            this.timestamp = Date.now();
+        }
+
+        // Base Game class
+        class WordGame {
+            constructor() {
+                this.chain = [];
+                this.score = 0;
+                this.isPlaying = false;
+                this.difficulty = 'easy';
+                this.mode = 'endless';
+            }
+
+            startNewGame() {
+                this.difficulty = document.getElementById('difficulty').value;
+                this.mode = document.getElementById('gameMode').value;
+                this.chain = [];
+                this.score = 0;
+                this.isPlaying = true;
+
+                document.getElementById('inputSection').style.display = 'block';
+                document.getElementById('wordInput').disabled = false;
+                document.getElementById('submitBtn').disabled = false;
+                document.getElementById('wordInput').value = '';
+                document.getElementById('wordInput').placeholder = 'Type your first word...';
+
+                this.updateDisplay();
+                this.hideMessage();
+                this.updateHint('Start with any word!');
+
+                if (this.mode === 'timed') {
+                    this.startTimedMode();
+                } else {
+                    document.getElementById('timerStat').style.display = 'none';
+                }
+
+                document.getElementById('wordInput').focus();
+            }
+
+            startTimedMode() {
+                document.getElementById('timerStat').style.display = 'block';
+                let timeLeft = 60;
+                document.getElementById('timerCount').textContent = timeLeft;
+
+                const timerInterval = setInterval(() => {
+                    timeLeft--;
+                    document.getElementById('timerCount').textContent = timeLeft;
+
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        this.endGame();
+                    }
+
+                    if (!this.isPlaying) {
+                        clearInterval(timerInterval);
+                    }
+                }, 1000);
+            }
+
+            submitWord() {
+                const input = document.getElementById('wordInput');
+                const wordText = input.value.trim();
+
+                if (!wordText || !this.isPlaying) return;
+
+                const validation = this.validateWord(wordText);
+                const word = new Word(wordText, validation.valid, validation.reason);
+
+                this.chain.push(word);
+
+                if (validation.valid) {
+                    this.score += wordText.length * (this.difficulty === 'hard' ? 3 : this.difficulty === 'medium' ? 2 : 1);
+                    this.showMessage(validation.reason, 'success');
+                } else {
+                    this.showMessage(validation.reason, 'error');
+                }
+
+                input.value = '';
+                this.updateDisplay();
+                this.updateHint(this.getNextHint());
+                input.focus();
+            }
+
+            validateWord(newWord) {
+                newWord = newWord.toLowerCase();
+
+                if (this.chain.length === 0) {
+                    return { valid: true, reason: 'First word of the chain!' };
+                }
+
+                const lastWord = this.chain[this.chain.length - 1].text;
+
+                if (this.difficulty === 'easy') {
+                    return this.validateEasy(lastWord, newWord);
+                } else if (this.difficulty === 'medium') {
+                    return this.validateMedium(lastWord, newWord);
+                } else {
+                    return this.validateHard(lastWord, newWord);
+                }
+            }
+
+            validateEasy(prev, curr) {
+                if (prev.slice(-1) === curr.charAt(0)) {
+                    return { valid: true, reason: `✓ "${curr}" starts with "${prev.slice(-1)}"` };
+                }
+                if (Math.abs(prev.length - curr.length) <= 1) {
+                    return { valid: true, reason: `✓ Similar length (${prev.length} → ${curr.length})` };
+                }
+                return { valid: false, reason: '✗ No connection found' };
+            }
+
+            validateMedium(prev, curr) {
+                let commonLetters = 0;
+                for (let char of curr) {
+                    if (prev.includes(char)) commonLetters++;
+                }
+                if (commonLetters >= 2) {
+                    return { valid: true, reason: `✓ ${commonLetters} common letters` };
+                }
+                return this.validateEasy(prev, curr);
+            }
+
+            validateHard(prev, curr) {
+                const categories = {
+                    animals: ['cat', 'dog', 'bird', 'fish', 'tiger', 'lion', 'bear', 'wolf'],
+                    colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink'],
+                    food: ['apple', 'bread', 'milk', 'cheese', 'pizza', 'rice']
+                };
+
+                for (let [category, words] of Object.entries(categories)) {
+                    if (words.includes(prev) && words.includes(curr)) {
+                        return { valid: true, reason: `✓ Both are ${category}` };
+                    }
+                }
+
+                if (prev.slice(-2) === curr.slice(-2) && prev.length > 2) {
+                    return { valid: true, reason: `✓ Rhyming words` };
+                }
+
+                return this.validateMedium(prev, curr);
+            }
+
+            updateDisplay() {
+                document.getElementById('scoreCount').textContent = this.score;
+                document.getElementById('chainCount').textContent = this.chain.length;
+
+                const chainDisplay = document.getElementById('wordChain');
+                chainDisplay.innerHTML = '';
+
+                if (this.chain.length === 0) {
+                    chainDisplay.innerHTML = '<div class="start-screen"><p>No words yet. Type your first word!</p></div>';
+                    return;
+                }
+
+                this.chain.forEach((word, index) => {
+                    const bubble = document.createElement('span');
+                    bubble.className = `word-bubble ${word.isValid ? '' : 'invalid'}`;
+                    bubble.textContent = word.originalText;
+                    bubble.title = word.reason;
+                    chainDisplay.appendChild(bubble);
+
+                    if (index < this.chain.length - 1) {
+                        const arrow = document.createElement('span');
+                        arrow.className = 'arrow';
+                        arrow.textContent = '→';
+                        chainDisplay.appendChild(arrow);
+                    }
+                });
+            }
+
+            getNextHint() {
+                if (this.chain.length === 0) return 'Start with any word!';
+                
+                const lastWord = this.chain[this.chain.length - 1].text;
+                
+                if (this.difficulty === 'easy') {
+                    return `Try a word starting with "${lastWord.slice(-1)}" or similar length`;
+                } else if (this.difficulty === 'medium') {
+                    return `Find a word with common letters to "${lastWord}"`;
+                } else {
+                    return `Connect with a word from same category or rhyme`;
+                }
+            }
+
+            updateHint(text) {
+                document.getElementById('validationHint').textContent = text;
+            }
+
+            showMessage(text, type) {
+                const msg = document.getElementById('gameMessage');
+                msg.textContent = text;
+                msg.className = `game-message ${type} show`;
+                setTimeout(() => this.hideMessage(), 3000);
+            }
+
+            hideMessage() {
+                document.getElementById('gameMessage').className = 'game-message';
+            }
+
+            endGame() {
+                this.isPlaying = false;
+                document.getElementById('wordInput').disabled = true;
+                document.getElementById('submitBtn').disabled = true;
+
+                this.showMessage(`Game Over! Final Score: ${this.score} | Chain: ${this.chain.length} words`, 'info');
+                
+                this.saveToHistory({
+                    date: new Date().toISOString(),
+                    score: this.score,
+                    chainLength: this.chain.length,
+                    chain: this.chain.map(w => w.originalText),
+                    difficulty: this.difficulty,
+                    mode: this.mode
+                });
+            }
+
+            saveToHistory(gameData) {
+                try {
+                    const history = JSON.parse(localStorage.getItem('wordGameHistory') || '[]');
+                    history.unshift(gameData);
+                    
+                    if (history.length > 10) {
+                        history.splice(10);
+                    }
+                    
+                    localStorage.setItem('wordGameHistory', JSON.stringify(history));
+                } catch (error) {
+                    console.error('Failed to save game:', error);
+                }
+            }
+        }
+
+        // Initialize game
+        const wordGame = new WordGame();
+
+        // Enter key support
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('wordInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    wordGame.submitWord();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
