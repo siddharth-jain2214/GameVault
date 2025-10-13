@@ -1,101 +1,108 @@
-// Game navigation function
-        function playGame(gameType) {
-            const gameRoutes = {
-                memory: 'memory-game.html',
-                'word-association': 'word-association.html'
-            };
+// Check if user is logged in
+function checkLogin() {
+  const username = localStorage.getItem("currentUser");
+  const authSection = document.getElementById("authSection");
 
-            if (gameRoutes[gameType]) {
-                window.location.href = gameRoutes[gameType];
-            } else {
-                alert('Game coming soon!');
-            }
-        }
+  if (username) {
+    authSection.innerHTML = `
+                    <div class="user-info">
+                        <span class="username-display">👤 ${username}</span>
+                        <button class="logout-btn" onclick="logout()">Logout</button>
+                    </div>
+                `;
+  } else {
+    authSection.innerHTML = '<a href="login.html" class="login-btn">Login</a>';
+  }
+}
 
-        // Load and display user stats from localStorage
-        function loadUserStats() {
-            try {
-                const memoryStats = JSON.parse(localStorage.getItem('memoryGameHistory') || '[]');
-                const wordStats = JSON.parse(localStorage.getItem('wordGameHistory') || '[]');
-                
-                const totalGames = memoryStats.length + wordStats.length;
-                const totalScore = memoryStats.reduce((sum, game) => sum + (game.score || 0), 0) +
-                                 wordStats.reduce((sum, game) => sum + (game.score || 0), 0);
-                
-                let bestStreak = 0;
-                memoryStats.concat(wordStats).forEach(game => {
-                    if (game.accuracy >= 70 || game.score > 50) {
-                        bestStreak++;
-                    }
-                });
-                
-                let favoriteGame = '-';
-                if (memoryStats.length > wordStats.length) {
-                    favoriteGame = 'Memory';
-                } else if (wordStats.length > memoryStats.length) {
-                    favoriteGame = 'Word Chain';
-                } else if (totalGames > 0) {
-                    favoriteGame = 'Tied';
-                }
-                
-                document.getElementById('totalGames').textContent = totalGames;
-                document.getElementById('totalScore').textContent = totalScore;
-                document.getElementById('bestStreak').textContent = bestStreak;
-                document.getElementById('favoriteGame').textContent = favoriteGame;
-                
-            } catch (error) {
-                console.log('No previous game stats found');
-            }
-        }
+// Logout function
+function logout() {
+  localStorage.removeItem("currentUser");
+  location.reload();
+}
 
-        // Smooth scrolling for navigation
-        function initSmoothScroll() {
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-        }
+// Load user stats from localStorage
+function loadStats() {
+  const memoryHistory = JSON.parse(
+    localStorage.getItem("memoryGameHistory") || "[]"
+  );
+  const wordHistory = JSON.parse(
+    localStorage.getItem("wordGameHistory") || "[]"
+  );
 
-        // Animate game cards on scroll
-        function initCardAnimations() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            });
+  const totalGames = memoryHistory.length + wordHistory.length;
 
-            document.querySelectorAll('.game-card').forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(card);
-            });
-        }
+  const memoryScore = memoryHistory.reduce(
+    (sum, game) => sum + (game.score || 0),
+    0
+  );
+  const wordScore = wordHistory.reduce(
+    (sum, game) => sum + (game.score || 0),
+    0
+  );
+  const totalScore = memoryScore + wordScore;
 
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            loadUserStats();
-            initSmoothScroll();
-            initCardAnimations();
-            
-            // Update footer year
-            document.querySelector('.footer p').innerHTML = 
-                `&copy; ${new Date().getFullYear()} GameVault. Challenge your mind with fun brain games!`;
-        });
+  let bestStreak = 0;
+  memoryHistory.forEach((game) => {
+    if (game.accuracy >= 70) bestStreak++;
+  });
+  wordHistory.forEach((game) => {
+    if (game.score > 50) bestStreak++;
+  });
 
-        // Auto-refresh stats when user returns from a game
-        setInterval(loadUserStats, 5000);
+  let favoriteGame = "-";
+  if (memoryHistory.length > wordHistory.length) {
+    favoriteGame = "Memory";
+  } else if (wordHistory.length > memoryHistory.length) {
+    favoriteGame = "Word Chain";
+  } else if (totalGames > 0) {
+    favoriteGame = "Tied";
+  }
+
+  document.getElementById("totalGames").textContent = totalGames;
+  document.getElementById("totalScore").textContent = totalScore;
+  document.getElementById("bestStreak").textContent = bestStreak;
+  document.getElementById("favoriteGame").textContent = favoriteGame;
+}
+
+// Game navigation
+function playGame(gameType) {
+  const currentUser = localStorage.getItem("currentUser");
+
+  if (!currentUser) {
+    alert("Please login first to play games!");
+    window.location.href = "login.html";
+    return;
+  }
+
+  if (gameType === "memory") {
+    window.location.href = "memory-game.html";
+  } else if (gameType === "word-association") {
+    window.location.href = "word-association.html";
+  } else {
+    alert("Game coming soon!");
+  }
+}
+
+// Smooth scroll
+function initSmoothScroll() {
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener("click", function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute("href"));
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  });
+}
+
+// Initialize page
+document.addEventListener("DOMContentLoaded", function () {
+  checkLogin();
+  loadStats();
+  initSmoothScroll();
+});
+
+// Auto-refresh stats when user comes back from a game
+setInterval(loadStats, 3000);
