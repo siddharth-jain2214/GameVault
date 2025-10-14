@@ -71,45 +71,19 @@
             border-radius: 10px;
             margin-bottom: 2rem;
             border: 2px solid #2a2a3e;
-        }
-
-        .controls-row {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .control-group {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .control-group label {
-            color: #a0a6b0;
-            font-size: 0.9rem;
-        }
-
-        .control-group select {
-            background: #2a2a3e;
-            color: #e1e5e9;
-            border: 1px solid #3a3a4e;
-            padding: 0.5rem;
-            border-radius: 6px;
-            cursor: pointer;
+            text-align: center;
         }
 
         .new-game-btn {
             background: linear-gradient(45deg, #00d4ff, #0099cc);
             color: white;
-            padding: 0.7rem 1.5rem;
+            padding: 0.8rem 2rem;
             border: none;
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            font-size: 1rem;
         }
 
         .new-game-btn:hover {
@@ -151,19 +125,25 @@
             display: grid;
             gap: 1rem;
             margin: 0 auto;
-            max-width: 600px;
+            max-width: 650px;
             padding: 2rem;
             background: #1e1e2f;
             border-radius: 10px;
             border: 2px solid #2a2a3e;
-        }
-
-        .game-board.grid-4 {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        .game-board.grid-6 {
             grid-template-columns: repeat(6, 1fr);
+        }
+
+        .game-board.empty {
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .game-board.empty .start-message {
+            text-align: center;
+            color: #a0a6b0;
+            font-size: 1.1rem;
         }
 
         /* Card Styles */
@@ -301,24 +281,7 @@
 
         <!-- Game Controls -->
         <div class="controls">
-            <div class="controls-row">
-                <div class="control-group">
-                    <label>Grid:</label>
-                    <select id="gridSize">
-                        <option value="4">4x4</option>
-                        <option value="6">6x6</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label>Theme:</label>
-                    <select id="cardTheme">
-                        <option value="emoji">Emojis</option>
-                        <option value="number">Numbers</option>
-                        <option value="letter">Letters</option>
-                    </select>
-                </div>
-                <button class="new-game-btn" onclick="game.startNewGame()">New Game</button>
-            </div>
+            <button class="new-game-btn" onclick="startGame()">New Game</button>
         </div>
 
         <!-- Stats Bar -->
@@ -341,211 +304,215 @@
         <div id="gameMessage" class="game-message"></div>
 
         <!-- Game Board -->
-        <div id="gameBoard" class="game-board grid-4">
-            <div class="start-screen">
-                <h2>Ready to Play?</h2>
-                <p>Click "New Game" to start matching cards!</p>
-            </div>
+        <div id="gameBoard" class="game-board empty">
+            <div class="start-message">Click "New Game" to start playing!</div>
         </div>
     </div>
 
     <script>
-        // Constructor function for Card
-        function Card(id, value) {
-            this.id = id;
-            this.value = value;
-            this.isFlipped = false;
-            this.isMatched = false;
+        // Game state
+        let cards = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let isPlaying = false;
+        let startTime = null;
+        let timerInterval = null;
+
+        // Start new game
+        function startGame() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('Please login first!');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            cards = [];
+            flippedCards = [];
+            matchedPairs = 0;
+            moves = 0;
+            isPlaying = true;
+            startTime = Date.now();
+
+            generateCards();
+            renderBoard();
+            updateStats();
+            hideMessage();
+            startTimer();
         }
 
-        // Game Class
-        class MemoryGame {
-            constructor() {
-                this.cards = [];
-                this.flippedCards = [];
-                this.moves = 0;
-                this.matches = 0;
-                this.totalPairs = 0;
-                this.isPlaying = false;
-                this.startTime = null;
-                this.timerInterval = null;
+        // Generate 36 cards (18 pairs) with numbers 1-18
+        function generateCards() {
+            const numbers = [];
+            for (let i = 1; i <= 18; i++) {
+                numbers.push(i);
+                numbers.push(i);
             }
 
-            startNewGame() {
-                const gridSize = parseInt(document.getElementById('gridSize').value);
-                const theme = document.getElementById('cardTheme').value;
-                
-                this.totalPairs = (gridSize * gridSize) / 2;
-                this.moves = 0;
-                this.matches = 0;
-                this.flippedCards = [];
-                this.isPlaying = true;
-                this.startTime = Date.now();
+            // Shuffle cards
+            cards = numbers.sort(() => Math.random() - 0.5).map((num, index) => ({
+                id: index,
+                value: num,
+                isFlipped: false,
+                isMatched: false
+            }));
+        }
 
-                this.cards = this.generateCards(this.totalPairs, theme);
-                this.renderBoard(gridSize);
-                this.updateStats();
-                this.hideMessage();
-                this.startTimer();
-            }
+        // Render game board
+        function renderBoard() {
+            const board = document.getElementById('gameBoard');
+            board.className = 'game-board';
+            board.innerHTML = '';
 
-            generateCards(pairs, theme) {
-                const themes = {
-                    emoji: ['🎮', '🎯', '🎨', '🎪', '🎭', '🎸', '🎺', '🎹', '🎲', '🎳', '⚽', '🏀', '🎾', '🏐', '🎱', '🏓', '🎿', '⛷️'],
-                    number: Array.from({length: 50}, (_, i) => i + 1),
-                    letter: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-                };
-
-                const values = themes[theme].sort(() => Math.random() - 0.5).slice(0, pairs);
-                const cardPairs = [];
-
-                values.forEach((value, index) => {
-                    cardPairs.push(new Card(index * 2, value));
-                    cardPairs.push(new Card(index * 2 + 1, value));
-                });
-
-                return cardPairs.sort(() => Math.random() - 0.5);
-            }
-
-            renderBoard(gridSize) {
-                const board = document.getElementById('gameBoard');
-                board.className = `game-board grid-${gridSize}`;
-                board.innerHTML = '';
-
-                this.cards.forEach(card => {
-                    const cardEl = document.createElement('div');
-                    cardEl.className = 'card';
-                    cardEl.dataset.id = card.id;
-                    
-                    const front = document.createElement('div');
-                    front.className = 'card-front';
-                    front.textContent = card.value;
-                    cardEl.appendChild(front);
-
-                    cardEl.addEventListener('click', () => this.handleCardClick(card.id));
-                    board.appendChild(cardEl);
-                });
-            }
-
-            handleCardClick(cardId) {
-                if (!this.isPlaying || this.flippedCards.length >= 2) return;
-
-                const card = this.cards.find(c => c.id === cardId);
-                if (!card || card.isFlipped || card.isMatched) return;
-
-                card.isFlipped = true;
-                this.flippedCards.push(card);
-                this.updateCardDisplay(cardId);
-
-                if (this.flippedCards.length === 2) {
-                    this.moves++;
-                    this.updateStats();
-                    setTimeout(() => this.checkMatch(), 600);
-                }
-            }
-
-            checkMatch() {
-                const [card1, card2] = this.flippedCards;
-
-                if (card1.value === card2.value) {
-                    card1.isMatched = true;
-                    card2.isMatched = true;
-                    this.matches++;
-                    this.updateCardDisplay(card1.id);
-                    this.updateCardDisplay(card2.id);
-                    
-                    if (this.matches === this.totalPairs) {
-                        this.endGame();
-                    }
-                } else {
-                    card1.isFlipped = false;
-                    card2.isFlipped = false;
-                    this.updateCardDisplay(card1.id);
-                    this.updateCardDisplay(card2.id);
-                }
-
-                this.flippedCards = [];
-                this.updateStats();
-            }
-
-            updateCardDisplay(cardId) {
-                const card = this.cards.find(c => c.id === cardId);
-                const cardEl = document.querySelector(`[data-id="${cardId}"]`);
-                
-                if (!cardEl) return;
-
+            cards.forEach(card => {
+                const cardEl = document.createElement('div');
                 cardEl.className = 'card';
-                if (card.isFlipped) cardEl.classList.add('flipped');
-                if (card.isMatched) cardEl.classList.add('matched');
-            }
-
-            updateStats() {
-                document.getElementById('movesCount').textContent = this.moves;
-                document.getElementById('matchesCount').textContent = this.matches;
-            }
-
-            startTimer() {
-                if (this.timerInterval) clearInterval(this.timerInterval);
+                cardEl.dataset.id = card.id;
                 
-                this.timerInterval = setInterval(() => {
-                    if (!this.isPlaying) return;
-                    
-                    const elapsed = Math.floor((Date.now() - this.startTime) / 1000);
-                    const minutes = Math.floor(elapsed / 60);
-                    const seconds = elapsed % 60;
-                    
-                    document.getElementById('timerCount').textContent = 
-                        `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                }, 1000);
-            }
+                const front = document.createElement('div');
+                front.className = 'card-front';
+                front.textContent = card.value;
+                cardEl.appendChild(front);
 
-            endGame() {
-                this.isPlaying = false;
-                clearInterval(this.timerInterval);
-                
-                const finalTime = Math.floor((Date.now() - this.startTime) / 1000);
-                const accuracy = Math.round((this.matches / this.moves) * 100);
-                
-                this.showMessage(`🎉 You Won! Time: ${Math.floor(finalTime/60)}:${(finalTime%60).toString().padStart(2,'0')} | Moves: ${this.moves} | Accuracy: ${accuracy}%`, 'win');
-                
-                this.saveToHistory({
-                    date: new Date().toISOString(),
-                    moves: this.moves,
-                    matches: this.matches,
-                    time: finalTime,
-                    accuracy: accuracy,
-                    score: Math.round(accuracy * (this.totalPairs / (finalTime / 60)))
-                });
-            }
+                cardEl.onclick = () => flipCard(card.id);
+                board.appendChild(cardEl);
+            });
+        }
 
-            saveToHistory(gameData) {
-                try {
-                    const history = JSON.parse(localStorage.getItem('memoryGameHistory') || '[]');
-                    history.unshift(gameData);
-                    
-                    if (history.length > 10) {
-                        history.splice(10);
-                    }
-                    
-                    localStorage.setItem('memoryGameHistory', JSON.stringify(history));
-                } catch (error) {
-                    console.error('Failed to save game:', error);
-                }
-            }
+        // Flip a card
+        function flipCard(cardId) {
+            if (!isPlaying || flippedCards.length >= 2) return;
 
-            showMessage(text, type) {
-                const msg = document.getElementById('gameMessage');
-                msg.textContent = text;
-                msg.className = `game-message ${type} show`;
-            }
+            const card = cards.find(c => c.id === cardId);
+            if (!card || card.isFlipped || card.isMatched) return;
 
-            hideMessage() {
-                document.getElementById('gameMessage').className = 'game-message';
+            card.isFlipped = true;
+            flippedCards.push(card);
+            updateCardDisplay(cardId);
+
+            if (flippedCards.length === 2) {
+                moves++;
+                updateStats();
+                setTimeout(checkMatch, 600);
             }
         }
 
-        // Initialize game
-        const game = new MemoryGame();
+        // Check if cards match
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+
+            if (card1.value === card2.value) {
+                card1.isMatched = true;
+                card2.isMatched = true;
+                matchedPairs++;
+                updateCardDisplay(card1.id);
+                updateCardDisplay(card2.id);
+                
+                if (matchedPairs === 18) {
+                    endGame();
+                }
+            } else {
+                card1.isFlipped = false;
+                card2.isFlipped = false;
+                updateCardDisplay(card1.id);
+                updateCardDisplay(card2.id);
+            }
+
+            flippedCards = [];
+            updateStats();
+        }
+
+        // Update card display
+        function updateCardDisplay(cardId) {
+            const card = cards.find(c => c.id === cardId);
+            const cardEl = document.querySelector(`[data-id="${cardId}"]`);
+            
+            if (!cardEl) return;
+
+            cardEl.className = 'card';
+            if (card.isFlipped) cardEl.classList.add('flipped');
+            if (card.isMatched) cardEl.classList.add('matched');
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('movesCount').textContent = moves;
+            document.getElementById('matchesCount').textContent = matchedPairs;
+        }
+
+        // Start timer
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            
+            timerInterval = setInterval(() => {
+                if (!isPlaying) return;
+                
+                const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                
+                document.getElementById('timerCount').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        // End game
+        function endGame() {
+            isPlaying = false;
+            clearInterval(timerInterval);
+            
+            const finalTime = Math.floor((Date.now() - startTime) / 1000);
+            const accuracy = Math.round((matchedPairs / moves) * 100);
+            
+            showMessage(`🎉 You Won! Time: ${Math.floor(finalTime/60)}:${(finalTime%60).toString().padStart(2,'0')} | Moves: ${moves} | Accuracy: ${accuracy}%`);
+            
+            saveGame({
+                date: new Date().toISOString(),
+                moves: moves,
+                matches: matchedPairs,
+                time: finalTime,
+                accuracy: accuracy,
+                score: Math.round(accuracy * (18 / (finalTime / 60)))
+            });
+        }
+
+        // Save game to user's history
+        function saveGame(gameData) {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) return;
+
+            const storageKey = `${currentUser}_memoryGameHistory`;
+            const history = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            history.unshift(gameData);
+            
+            if (history.length > 10) {
+                history.splice(10);
+            }
+            
+            localStorage.setItem(storageKey, JSON.stringify(history));
+        }
+
+        // Show message
+        function showMessage(text) {
+            const msg = document.getElementById('gameMessage');
+            msg.textContent = text;
+            msg.className = 'game-message win show';
+        }
+
+        // Hide message
+        function hideMessage() {
+            document.getElementById('gameMessage').className = 'game-message';
+        }
+
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('Please login first to play!');
+                window.location.href = 'login.html';
+            }
+        });
     </script>
 </body>
 </html>
