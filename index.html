@@ -42,6 +42,28 @@
             gap: 2rem;
         }
 
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover {
+            color: #00d4ff;
+        }
+
         .login-btn {
             background: linear-gradient(45deg, #ff6b35, #f7931e);
             color: white;
@@ -81,28 +103,6 @@
 
         .logout-btn:hover {
             background: #3a3a4e;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        .nav-menu a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.3s;
-        }
-
-        .nav-menu a:hover {
-            color: #00d4ff;
         }
 
         /* Hero Section */
@@ -387,7 +387,7 @@
             <div class="game-card">
                 <div class="game-icon">🧠</div>
                 <h3 class="game-title">Memory Flip Cards</h3>
-                <p class="game-description">Test your memory by matching pairs of cards. Choose from different themes and difficulty levels.</p>
+                <p class="game-description">Test your memory by matching pairs of cards. 6x6 grid with numbers.</p>
                 <button class="play-button" onclick="playGame('memory')">Play Now</button>
             </div>
 
@@ -395,22 +395,15 @@
             <div class="game-card">
                 <div class="game-icon">💭</div>
                 <h3 class="game-title">Word Association</h3>
-                <p class="game-description">Create amazing word chains by connecting related words. Challenge your vocabulary and creativity.</p>
+                <p class="game-description">Create amazing word chains by connecting related words. Challenge your vocabulary.</p>
                 <button class="play-button" onclick="playGame('word-association')">Play Now</button>
             </div>
 
             <!-- Coming Soon Games -->
             <div class="game-card">
                 <div class="game-icon">🎯</div>
-                <h3 class="game-title">Tic Tac Toe</h3>
-                <p class="game-description">Classic strategy game with AI opponent. Test your strategic thinking skills.</p>
-                <button class="play-button coming-soon" disabled>Coming Soon</button>
-            </div>
-
-            <div class="game-card">
-                <div class="game-icon">🔢</div>
-                <h3 class="game-title">Number Puzzle</h3>
-                <p class="game-description">Solve challenging number puzzles and mathematical brain teasers.</p>
+                <h3 class="game-title">More Games</h3>
+                <p class="game-description">More exciting games coming soon!</p>
                 <button class="play-button coming-soon" disabled>Coming Soon</button>
             </div>
         </div>
@@ -433,7 +426,7 @@
                 </div>
                 <div class="stat-item">
                     <div class="stat-number" id="bestStreak">0</div>
-                    <div class="stat-label">Best Winning Streak</div>
+                    <div class="stat-label">Best Streak</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number" id="favoriteGame">-</div>
