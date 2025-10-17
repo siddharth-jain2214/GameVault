@@ -60,8 +60,29 @@
         .game-title {
             text-align: center;
             font-size: 2rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             color: #ffffff;
+        }
+
+        .game-rule {
+            text-align: center;
+            background: #1e1e2f;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 2px solid #2a2a3e;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .game-rule h3 {
+            color: #00d4ff;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-rule p {
+            color: #a0a6b0;
+            font-size: 0.95rem;
         }
 
         /* Game Controls */
@@ -71,45 +92,19 @@
             border-radius: 10px;
             margin-bottom: 2rem;
             border: 2px solid #2a2a3e;
-        }
-
-        .controls-row {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .control-group {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .control-group label {
-            color: #a0a6b0;
-            font-size: 0.9rem;
-        }
-
-        .control-group select {
-            background: #2a2a3e;
-            color: #e1e5e9;
-            border: 1px solid #3a3a4e;
-            padding: 0.5rem;
-            border-radius: 6px;
-            cursor: pointer;
+            text-align: center;
         }
 
         .new-game-btn {
             background: linear-gradient(45deg, #00d4ff, #0099cc);
             color: white;
-            padding: 0.7rem 1.5rem;
+            padding: 0.8rem 2rem;
             border: none;
             border-radius: 6px;
             font-weight: 600;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+            font-size: 1rem;
         }
 
         .new-game-btn:hover {
@@ -176,6 +171,14 @@
             cursor: not-allowed;
         }
 
+        .word-input.valid {
+            border-color: #00ff88;
+        }
+
+        .word-input.invalid {
+            border-color: #ff6b6b;
+        }
+
         .submit-btn {
             width: 100%;
             padding: 1rem;
@@ -204,7 +207,6 @@
             padding: 0.8rem;
             background: #2a2a3e;
             border-radius: 6px;
-            border-left: 4px solid #00d4ff;
             font-size: 0.9rem;
             color: #a0a6b0;
         }
@@ -238,12 +240,6 @@
             border-radius: 20px;
             font-weight: 500;
             border: 2px solid #3a3a4e;
-        }
-
-        .word-bubble.invalid {
-            background: #3a2a2e;
-            color: #ff6b6b;
-            border-color: #ff6b6b;
         }
 
         .arrow {
@@ -283,19 +279,11 @@
             border: 2px solid #00d4ff;
         }
 
-        /* Start Screen */
-        .start-screen {
+        .start-message {
             text-align: center;
-            padding: 3rem;
-        }
-
-        .start-screen h2 {
-            color: #00d4ff;
-            margin-bottom: 1rem;
-        }
-
-        .start-screen p {
             color: #a0a6b0;
+            font-size: 1rem;
+            padding: 2rem;
         }
 
         /* Responsive */
@@ -330,26 +318,16 @@
     <div class="container">
         <h1 class="game-title">💭 Word Association Chain</h1>
 
+        <!-- Game Rule -->
+        <div class="game-rule">
+            <h3>📜 Game Rule</h3>
+            <p>The first letter of your word must match the last letter of the previous word!</p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem;">Example: CAT → <strong>T</strong>IGER → <strong>R</strong>ABBIT → <strong>T</strong>RAIN</p>
+        </div>
+
         <!-- Game Controls -->
         <div class="controls">
-            <div class="controls-row">
-                <div class="control-group">
-                    <label>Difficulty:</label>
-                    <select id="difficulty">
-                        <option value="easy">Easy</option>
-                        <option value="medium">Medium</option>
-                        <option value="hard">Hard</option>
-                    </select>
-                </div>
-                <div class="control-group">
-                    <label>Mode:</label>
-                    <select id="gameMode">
-                        <option value="endless">Endless</option>
-                        <option value="timed">Timed (60s)</option>
-                    </select>
-                </div>
-                <button class="new-game-btn" onclick="wordGame.startNewGame()">New Game</button>
-            </div>
+            <button class="new-game-btn" onclick="startGame()">New Game (60 seconds)</button>
         </div>
 
         <!-- Stats Bar -->
@@ -362,7 +340,7 @@
                 <div class="stat-value" id="chainCount">0</div>
                 <div class="stat-label">Chain Length</div>
             </div>
-            <div class="stat" id="timerStat" style="display: none;">
+            <div class="stat">
                 <div class="stat-value" id="timerCount">60</div>
                 <div class="stat-label">Time Left</div>
             </div>
@@ -380,274 +358,275 @@
                 placeholder="Type your word here..."
                 disabled
             >
-            <button class="submit-btn" id="submitBtn" onclick="wordGame.submitWord()" disabled>
+            <button class="submit-btn" id="submitBtn" onclick="submitWord()" disabled>
                 Add Word
             </button>
-            <div class="validation-hint" id="validationHint"></div>
+            <div class="validation-hint" id="validationHint">Start with any word!</div>
         </div>
 
         <!-- Word Chain Display -->
         <div class="chain-section">
             <div class="chain-title">Current Word Chain</div>
             <div class="word-chain" id="wordChain">
-                <div class="start-screen">
-                    <h2>Ready to Build Word Chains?</h2>
-                    <p>Click "New Game" and start connecting words!</p>
-                </div>
+                <div class="start-message">Click "New Game" to start building your word chain!</div>
             </div>
         </div>
     </div>
 
     <script>
-        // Constructor function for Word
-        function Word(text, isValid, reason) {
-            this.text = text.toLowerCase();
-            this.originalText = text;
-            this.isValid = isValid;
-            this.reason = reason;
-            this.timestamp = Date.now();
+        // Game state
+        let chain = [];
+        let score = 0;
+        let isPlaying = false;
+        let timeLeft = 60;
+        let timerInterval = null;
+        let usedWords = new Set();
+
+        // Start new game
+        function startGame() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('Please login first!');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            chain = [];
+            score = 0;
+            timeLeft = 60;
+            isPlaying = true;
+            usedWords = new Set();
+
+            document.getElementById('inputSection').style.display = 'block';
+            document.getElementById('wordInput').disabled = false;
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('wordInput').value = '';
+            document.getElementById('wordInput').className = 'word-input';
+
+            updateDisplay();
+            hideMessage();
+            updateHint('Start with any word!');
+            startTimer();
+
+            document.getElementById('wordInput').focus();
         }
 
-        // Base Game class
-        class WordGame {
-            constructor() {
-                this.chain = [];
-                this.score = 0;
-                this.isPlaying = false;
-                this.difficulty = 'easy';
-                this.mode = 'endless';
-            }
+        // Start timer
+        function startTimer() {
+            if (timerInterval) clearInterval(timerInterval);
 
-            startNewGame() {
-                this.difficulty = document.getElementById('difficulty').value;
-                this.mode = document.getElementById('gameMode').value;
-                this.chain = [];
-                this.score = 0;
-                this.isPlaying = true;
-
-                document.getElementById('inputSection').style.display = 'block';
-                document.getElementById('wordInput').disabled = false;
-                document.getElementById('submitBtn').disabled = false;
-                document.getElementById('wordInput').value = '';
-                document.getElementById('wordInput').placeholder = 'Type your first word...';
-
-                this.updateDisplay();
-                this.hideMessage();
-                this.updateHint('Start with any word!');
-
-                if (this.mode === 'timed') {
-                    this.startTimedMode();
-                } else {
-                    document.getElementById('timerStat').style.display = 'none';
-                }
-
-                document.getElementById('wordInput').focus();
-            }
-
-            startTimedMode() {
-                document.getElementById('timerStat').style.display = 'block';
-                let timeLeft = 60;
+            timerInterval = setInterval(() => {
+                timeLeft--;
                 document.getElementById('timerCount').textContent = timeLeft;
 
-                const timerInterval = setInterval(() => {
-                    timeLeft--;
-                    document.getElementById('timerCount').textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    endGame();
+                }
 
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        this.endGame();
-                    }
+                if (!isPlaying) {
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
 
-                    if (!this.isPlaying) {
-                        clearInterval(timerInterval);
-                    }
+        // Submit word
+        function submitWord() {
+            const input = document.getElementById('wordInput');
+            const wordText = input.value.trim();
+
+            if (!wordText || !isPlaying) return;
+
+            // Check if word already used
+            if (usedWords.has(wordText.toLowerCase())) {
+                showMessage('Word already used! Try a different word.', 'error');
+                input.value = '';
+                input.focus();
+                return;
+            }
+
+            const validation = validateWord(wordText);
+            
+            if (validation.valid) {
+                chain.push({
+                    text: wordText.toLowerCase(),
+                    originalText: wordText
+                });
+                
+                usedWords.add(wordText.toLowerCase());
+                score += wordText.length * 10;
+                showMessage(`✓ Correct! "${wordText}" added to chain.`, 'success');
+                input.className = 'word-input';
+            } else {
+                showMessage(validation.reason, 'error');
+                input.className = 'word-input invalid';
+                setTimeout(() => {
+                    input.className = 'word-input';
                 }, 1000);
             }
 
-            submitWord() {
-                const input = document.getElementById('wordInput');
-                const wordText = input.value.trim();
+            input.value = '';
+            updateDisplay();
+            updateHint(getNextHint());
+            input.focus();
+        }
 
-                if (!wordText || !this.isPlaying) return;
+        // Validate word
+        function validateWord(newWord) {
+            newWord = newWord.toLowerCase().trim();
 
-                const validation = this.validateWord(wordText);
-                const word = new Word(wordText, validation.valid, validation.reason);
-
-                this.chain.push(word);
-
-                if (validation.valid) {
-                    this.score += wordText.length * (this.difficulty === 'hard' ? 3 : this.difficulty === 'medium' ? 2 : 1);
-                    this.showMessage(validation.reason, 'success');
-                } else {
-                    this.showMessage(validation.reason, 'error');
-                }
-
-                input.value = '';
-                this.updateDisplay();
-                this.updateHint(this.getNextHint());
-                input.focus();
+            // Check if word is too short
+            if (newWord.length < 2) {
+                return { valid: false, reason: '✗ Word must be at least 2 letters long' };
             }
 
-            validateWord(newWord) {
-                newWord = newWord.toLowerCase();
-
-                if (this.chain.length === 0) {
-                    return { valid: true, reason: 'First word of the chain!' };
-                }
-
-                const lastWord = this.chain[this.chain.length - 1].text;
-
-                if (this.difficulty === 'easy') {
-                    return this.validateEasy(lastWord, newWord);
-                } else if (this.difficulty === 'medium') {
-                    return this.validateMedium(lastWord, newWord);
-                } else {
-                    return this.validateHard(lastWord, newWord);
-                }
+            // First word is always valid
+            if (chain.length === 0) {
+                return { valid: true, reason: 'First word of the chain!' };
             }
 
-            validateEasy(prev, curr) {
-                if (prev.slice(-1) === curr.charAt(0)) {
-                    return { valid: true, reason: `✓ "${curr}" starts with "${prev.slice(-1)}"` };
-                }
-                if (Math.abs(prev.length - curr.length) <= 1) {
-                    return { valid: true, reason: `✓ Similar length (${prev.length} → ${curr.length})` };
-                }
-                return { valid: false, reason: '✗ No connection found' };
-            }
+            const lastWord = chain[chain.length - 1].text;
+            const lastLetter = lastWord.slice(-1);
+            const firstLetter = newWord.charAt(0);
 
-            validateMedium(prev, curr) {
-                let commonLetters = 0;
-                for (let char of curr) {
-                    if (prev.includes(char)) commonLetters++;
-                }
-                if (commonLetters >= 2) {
-                    return { valid: true, reason: `✓ ${commonLetters} common letters` };
-                }
-                return this.validateEasy(prev, curr);
-            }
-
-            validateHard(prev, curr) {
-                const categories = {
-                    animals: ['cat', 'dog', 'bird', 'fish', 'tiger', 'lion', 'bear', 'wolf'],
-                    colors: ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink'],
-                    food: ['apple', 'bread', 'milk', 'cheese', 'pizza', 'rice']
+            if (lastLetter === firstLetter) {
+                return { valid: true, reason: `✓ "${newWord}" starts with "${lastLetter}"` };
+            } else {
+                return { 
+                    valid: false, 
+                    reason: `✗ Word must start with "${lastLetter}" (last letter of "${lastWord}")` 
                 };
-
-                for (let [category, words] of Object.entries(categories)) {
-                    if (words.includes(prev) && words.includes(curr)) {
-                        return { valid: true, reason: `✓ Both are ${category}` };
-                    }
-                }
-
-                if (prev.slice(-2) === curr.slice(-2) && prev.length > 2) {
-                    return { valid: true, reason: `✓ Rhyming words` };
-                }
-
-                return this.validateMedium(prev, curr);
-            }
-
-            updateDisplay() {
-                document.getElementById('scoreCount').textContent = this.score;
-                document.getElementById('chainCount').textContent = this.chain.length;
-
-                const chainDisplay = document.getElementById('wordChain');
-                chainDisplay.innerHTML = '';
-
-                if (this.chain.length === 0) {
-                    chainDisplay.innerHTML = '<div class="start-screen"><p>No words yet. Type your first word!</p></div>';
-                    return;
-                }
-
-                this.chain.forEach((word, index) => {
-                    const bubble = document.createElement('span');
-                    bubble.className = `word-bubble ${word.isValid ? '' : 'invalid'}`;
-                    bubble.textContent = word.originalText;
-                    bubble.title = word.reason;
-                    chainDisplay.appendChild(bubble);
-
-                    if (index < this.chain.length - 1) {
-                        const arrow = document.createElement('span');
-                        arrow.className = 'arrow';
-                        arrow.textContent = '→';
-                        chainDisplay.appendChild(arrow);
-                    }
-                });
-            }
-
-            getNextHint() {
-                if (this.chain.length === 0) return 'Start with any word!';
-                
-                const lastWord = this.chain[this.chain.length - 1].text;
-                
-                if (this.difficulty === 'easy') {
-                    return `Try a word starting with "${lastWord.slice(-1)}" or similar length`;
-                } else if (this.difficulty === 'medium') {
-                    return `Find a word with common letters to "${lastWord}"`;
-                } else {
-                    return `Connect with a word from same category or rhyme`;
-                }
-            }
-
-            updateHint(text) {
-                document.getElementById('validationHint').textContent = text;
-            }
-
-            showMessage(text, type) {
-                const msg = document.getElementById('gameMessage');
-                msg.textContent = text;
-                msg.className = `game-message ${type} show`;
-                setTimeout(() => this.hideMessage(), 3000);
-            }
-
-            hideMessage() {
-                document.getElementById('gameMessage').className = 'game-message';
-            }
-
-            endGame() {
-                this.isPlaying = false;
-                document.getElementById('wordInput').disabled = true;
-                document.getElementById('submitBtn').disabled = true;
-
-                this.showMessage(`Game Over! Final Score: ${this.score} | Chain: ${this.chain.length} words`, 'info');
-                
-                this.saveToHistory({
-                    date: new Date().toISOString(),
-                    score: this.score,
-                    chainLength: this.chain.length,
-                    chain: this.chain.map(w => w.originalText),
-                    difficulty: this.difficulty,
-                    mode: this.mode
-                });
-            }
-
-            saveToHistory(gameData) {
-                try {
-                    const history = JSON.parse(localStorage.getItem('wordGameHistory') || '[]');
-                    history.unshift(gameData);
-                    
-                    if (history.length > 10) {
-                        history.splice(10);
-                    }
-                    
-                    localStorage.setItem('wordGameHistory', JSON.stringify(history));
-                } catch (error) {
-                    console.error('Failed to save game:', error);
-                }
             }
         }
 
-        // Initialize game
-        const wordGame = new WordGame();
-
-        // Enter key support
+        // Real-time validation as user types
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('wordInput').addEventListener('keypress', (e) => {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('Please login first to play!');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const input = document.getElementById('wordInput');
+            
+            input.addEventListener('input', (e) => {
+                if (!isPlaying || chain.length === 0) return;
+                
+                const wordText = e.target.value.trim().toLowerCase();
+                if (!wordText) {
+                    input.className = 'word-input';
+                    return;
+                }
+
+                const lastWord = chain[chain.length - 1].text;
+                const lastLetter = lastWord.slice(-1);
+                const firstLetter = wordText.charAt(0);
+
+                if (lastLetter === firstLetter && wordText.length >= 2) {
+                    input.className = 'word-input valid';
+                } else if (wordText.length >= 1) {
+                    input.className = 'word-input invalid';
+                } else {
+                    input.className = 'word-input';
+                }
+            });
+
+            input.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
-                    wordGame.submitWord();
+                    submitWord();
                 }
             });
         });
+
+        // Update display
+        function updateDisplay() {
+            document.getElementById('scoreCount').textContent = score;
+            document.getElementById('chainCount').textContent = chain.length;
+
+            const chainDisplay = document.getElementById('wordChain');
+            chainDisplay.innerHTML = '';
+
+            if (chain.length === 0) {
+                chainDisplay.innerHTML = '<div class="start-message">No words yet. Type your first word!</div>';
+                return;
+            }
+
+            chain.forEach((word, index) => {
+                const bubble = document.createElement('span');
+                bubble.className = 'word-bubble';
+                bubble.textContent = word.originalText;
+                chainDisplay.appendChild(bubble);
+
+                if (index < chain.length - 1) {
+                    const arrow = document.createElement('span');
+                    arrow.className = 'arrow';
+                    arrow.textContent = '→';
+                    chainDisplay.appendChild(arrow);
+                }
+            });
+        }
+
+        // Get next hint
+        function getNextHint() {
+            if (chain.length === 0) return 'Start with any word!';
+            
+            const lastWord = chain[chain.length - 1].text;
+            const lastLetter = lastWord.slice(-1).toUpperCase();
+            
+            return `Next word must start with "${lastLetter}"`;
+        }
+
+        // Update hint
+        function updateHint(text) {
+            document.getElementById('validationHint').textContent = text;
+        }
+
+        // Show message
+        function showMessage(text, type) {
+            const msg = document.getElementById('gameMessage');
+            msg.textContent = text;
+            msg.className = `game-message ${type} show`;
+            setTimeout(() => hideMessage(), 2000);
+        }
+
+        // Hide message
+        function hideMessage() {
+            document.getElementById('gameMessage').className = 'game-message';
+        }
+
+        // End game
+        function endGame() {
+            isPlaying = false;
+            document.getElementById('wordInput').disabled = true;
+            document.getElementById('submitBtn').disabled = true;
+
+            showMessage(`⏰ Time's Up! Final Score: ${score} | Chain: ${chain.length} words`, 'info');
+            
+            saveToHistory({
+                date: new Date().toISOString(),
+                score: score,
+                chainLength: chain.length,
+                chain: chain.map(w => w.originalText),
+                timeUsed: 60
+            });
+        }
+
+        // Save to history
+        function saveToHistory(gameData) {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) return;
+
+            const storageKey = `${currentUser}_wordGameHistory`;
+            const history = JSON.parse(localStorage.getItem(storageKey) || '[]');
+            history.unshift(gameData);
+            
+            if (history.length > 10) {
+                history.splice(10);
+            }
+            
+            localStorage.setItem(storageKey, JSON.stringify(history));
+        }
     </script>
 </body>
 </html>
