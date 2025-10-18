@@ -232,18 +232,6 @@
             box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
         }
 
-        .play-button:disabled {
-            background: #4a4a5e;
-            color: #888;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .coming-soon {
-            background: #4a4a5e;
-            color: #888;
-        }
-
         /* Stats Section */
         .stats-section {
             background: #16213e;
@@ -488,29 +476,38 @@
 
             // Load user-specific game history
             const memoryHistory = JSON.parse(localStorage.getItem(`${currentUser}_memoryGameHistory`) || '[]');
-            const wordHistory = JSON.parse(localStorage.getItem(`${currentUser}_wordGameHistory`) || '[]');
+            const numberHistory = JSON.parse(localStorage.getItem(`${currentUser}_numberGameHistory`) || '[]');
+            const reactionHistory = JSON.parse(localStorage.getItem(`${currentUser}_reactionGameHistory`) || '[]');
             
-            const totalGames = memoryHistory.length + wordHistory.length;
+            const totalGames = memoryHistory.length + numberHistory.length + reactionHistory.length;
             
             const memoryScore = memoryHistory.reduce((sum, game) => sum + (game.score || 0), 0);
-            const wordScore = wordHistory.reduce((sum, game) => sum + (game.score || 0), 0);
-            const totalScore = memoryScore + wordScore;
+            const numberScore = numberHistory.reduce((sum, game) => sum + (game.score || 0), 0);
+            const reactionScore = reactionHistory.reduce((sum, game) => sum + (game.score || 0), 0);
+            const totalScore = memoryScore + numberScore + reactionScore;
             
             let bestStreak = 0;
             memoryHistory.forEach(game => {
                 if (game.accuracy >= 70) bestStreak++;
             });
-            wordHistory.forEach(game => {
-                if (game.score > 50) bestStreak++;
+            numberHistory.forEach(game => {
+                if (game.attempts <= 7) bestStreak++;
+            });
+            reactionHistory.forEach(game => {
+                if (game.avgTime < 300) bestStreak++;
             });
             
             let favoriteGame = '-';
-            if (memoryHistory.length > wordHistory.length) {
-                favoriteGame = 'Memory';
-            } else if (wordHistory.length > memoryHistory.length) {
-                favoriteGame = 'Word Chain';
-            } else if (totalGames > 0) {
-                favoriteGame = 'Tied';
+            const gameCounts = {
+                'Memory': memoryHistory.length,
+                'Number Guess': numberHistory.length,
+                'Reaction': reactionHistory.length
+            };
+            
+            const maxGames = Math.max(...Object.values(gameCounts));
+            if (maxGames > 0) {
+                const favorites = Object.keys(gameCounts).filter(game => gameCounts[game] === maxGames);
+                favoriteGame = favorites.length === 1 ? favorites[0] : 'Tied';
             }
             
             document.getElementById('totalGames').textContent = totalGames;
@@ -529,10 +526,13 @@
                 return;
             }
 
+            // Navigate to appropriate game page
             if (gameType === 'memory') {
                 window.location.href = 'memory-game.html';
-            } else if (gameType === 'word-association') {
-                window.location.href = 'word-association.html';
+            } else if (gameType === 'number-guess') {
+                window.location.href = 'number-guess.html';
+            } else if (gameType === 'reaction-time') {
+                window.location.href = 'reaction-time.html';
             } else {
                 alert('Game coming soon!');
             }
