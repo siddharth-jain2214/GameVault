@@ -35,6 +35,28 @@ body {
   gap: 2rem;
 }
 
+.logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  gap: 2rem;
+}
+
+.nav-menu a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-menu a:hover {
+  color: #00d4ff;
+}
+
 .login-btn {
   background: linear-gradient(45deg, #ff6b35, #f7931e);
   color: white;
@@ -74,28 +96,6 @@ body {
 
 .logout-btn:hover {
   background: #3a3a4e;
-}
-
-.logo {
-  font-size: 1.8rem;
-  font-weight: bold;
-}
-
-.nav-menu {
-  display: flex;
-  list-style: none;
-  gap: 2rem;
-}
-
-.nav-menu a {
-  color: white;
-  text-decoration: none;
-  font-weight: 500;
-  transition: opacity 0.3s;
-}
-
-.nav-menu a:hover {
-  color: #00d4ff;
 }
 
 /* Hero Section */
@@ -223,18 +223,6 @@ body {
   background: linear-gradient(45deg, #0099cc, #00d4ff);
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(0, 212, 255, 0.5);
-}
-
-.play-button:disabled {
-  background: #4a4a5e;
-  color: #888;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.coming-soon {
-  background: #4a4a5e;
-  color: #888;
 }
 
 /* Stats Section */

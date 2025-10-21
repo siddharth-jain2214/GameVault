@@ -6,7 +6,7 @@ function checkLogin() {
   if (username) {
     authSection.innerHTML = `
                     <div class="user-info">
-                        <span class="username-display">👤 ${username}</span>
+                        <span class="use  rname-display">👤 ${username}</span>
                         <button class="logout-btn" onclick="logout()">Logout</button>
                     </div>
                 `;
@@ -18,45 +18,82 @@ function checkLogin() {
 // Logout function
 function logout() {
   localStorage.removeItem("currentUser");
-  location.reload();
+
+  // Reset stats to 0 immediately
+  document.getElementById("totalGames").textContent = "0";
+  document.getElementById("totalScore").textContent = "0";
+  document.getElementById("bestStreak").textContent = "0";
+  document.getElementById("favoriteGame").textContent = "-";
+
+  // Update UI to show login button
+  document.getElementById("authSection").innerHTML =
+    '<a href="login.html" class="login-btn">Login</a>';
 }
 
 // Load user stats from localStorage
 function loadStats() {
+  const currentUser = localStorage.getItem("currentUser");
+
+  if (!currentUser) {
+    document.getElementById("totalGames").textContent = "0";
+    document.getElementById("totalScore").textContent = "0";
+    document.getElementById("bestStreak").textContent = "0";
+    document.getElementById("favoriteGame").textContent = "-";
+    return;
+  }
+
+  // Load user-specific game history
   const memoryHistory = JSON.parse(
-    localStorage.getItem("memoryGameHistory") || "[]"
+    localStorage.getItem(`${currentUser}_memoryGameHistory`) || "[]"
   );
-  const wordHistory = JSON.parse(
-    localStorage.getItem("wordGameHistory") || "[]"
+  const numberHistory = JSON.parse(
+    localStorage.getItem(`${currentUser}_numberGameHistory`) || "[]"
+  );
+  const reactionHistory = JSON.parse(
+    localStorage.getItem(`${currentUser}_reactionGameHistory`) || "[]"
   );
 
-  const totalGames = memoryHistory.length + wordHistory.length;
+  const totalGames =
+    memoryHistory.length + numberHistory.length + reactionHistory.length;
 
   const memoryScore = memoryHistory.reduce(
     (sum, game) => sum + (game.score || 0),
     0
   );
-  const wordScore = wordHistory.reduce(
+  const numberScore = numberHistory.reduce(
     (sum, game) => sum + (game.score || 0),
     0
   );
-  const totalScore = memoryScore + wordScore;
+  const reactionScore = reactionHistory.reduce(
+    (sum, game) => sum + (game.score || 0),
+    0
+  );
+  const totalScore = memoryScore + numberScore + reactionScore;
 
   let bestStreak = 0;
   memoryHistory.forEach((game) => {
     if (game.accuracy >= 70) bestStreak++;
   });
-  wordHistory.forEach((game) => {
-    if (game.score > 50) bestStreak++;
+  numberHistory.forEach((game) => {
+    if (game.attempts <= 7) bestStreak++;
+  });
+  reactionHistory.forEach((game) => {
+    if (game.avgTime < 300) bestStreak++;
   });
 
   let favoriteGame = "-";
-  if (memoryHistory.length > wordHistory.length) {
-    favoriteGame = "Memory";
-  } else if (wordHistory.length > memoryHistory.length) {
-    favoriteGame = "Word Chain";
-  } else if (totalGames > 0) {
-    favoriteGame = "Tied";
+  const gameCounts = {
+    Memory: memoryHistory.length,
+    "Number Guess": numberHistory.length,
+    Reaction: reactionHistory.length,
+  };
+
+  const maxGames = Math.max(...Object.values(gameCounts));
+  if (maxGames > 0) {
+    const favorites = Object.keys(gameCounts).filter(
+      (game) => gameCounts[game] === maxGames
+    );
+    favoriteGame = favorites.length === 1 ? favorites[0] : "Tied";
   }
 
   document.getElementById("totalGames").textContent = totalGames;
@@ -75,10 +112,13 @@ function playGame(gameType) {
     return;
   }
 
+  // Navigate to appropriate game page
   if (gameType === "memory") {
     window.location.href = "memory-game.html";
-  } else if (gameType === "word-association") {
-    window.location.href = "word-association.html";
+  } else if (gameType === "number-guess") {
+    window.location.href = "number-guess.html";
+  } else if (gameType === "reaction-time") {
+    window.location.href = "reaction-time.html";
   } else {
     alert("Game coming soon!");
   }
