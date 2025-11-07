@@ -1,33 +1,31 @@
-🎮 GameVault
+# 🎮 GameVault  
 
-GameVault is a simple, browser-based web project built using HTML, CSS, and JavaScript. It serves as a mini collection of fun and interactive games accessible from a single hub. Designed for a smooth user experience, it demonstrates the use of DOM manipulation, event handling, and basic web UI design.
+**GameVault** is a simple, browser-based web project built using **HTML, CSS, and JavaScript**. It serves as a mini collection of fun and interactive games accessible from a single hub. Designed for a smooth user experience, it demonstrates the use of DOM manipulation, event handling, and basic web UI design.
 
-🚀 Features
+---
 
-🧠 Memory Game – Test your concentration by matching pairs of cards.
+## 🚀 Features  
 
-🔢 Number Guessing Game – Guess the secret number within a limited number of tries.
+- 🧠 **Memory Game** – Test your concentration by matching pairs of cards.  
+- 🔢 **Number Guessing Game** – Guess the secret number within a limited number of tries.  
+- 📊 **Game Stats Board** – View total games played, best streak, and favorite game stats.  
+- 🔐 **Login System** – A simple login interface to access the game vault.  
+- 🖥️ **Interactive UI** – Clean and responsive design using HTML and CSS only.  
+- ⚡ **Pure JavaScript Logic** – No frameworks or libraries used — everything runs directly in the browser.  
 
-🔐 Login System – A simple login interface to access the game vault.
+---
 
-📊 Game Stats Board – View total games played, best streak, and favorite game stats.
+## 🧩 Tech Stack  
 
-🖥️ Interactive UI – Clean and responsive design using HTML and CSS only.
+- **HTML5** – Structure and layout  
+- **CSS3** – Styling and responsiveness  
+- **JavaScript (Vanilla)** – Game logic and interactivity  
 
-⚡ Pure JavaScript Logic – No frameworks or libraries used — everything runs directly in the browser.
+---
 
+## 📂 Project Structure  
 
-🧩 Tech Stack
-
-HTML5 – Structure and layout
-
-CSS3 – Styling and responsiveness
-
-JavaScript (Vanilla) – Game logic and interactivity
-
-
-Project Structure
-
+```plaintext
 GameVault/
 │
 ├── index.html               # Main dashboard page
@@ -48,22 +46,34 @@ GameVault/
 ├── number-guess-script.js   # Number guessing logic
 │
 └── README.md
+```
 
+---
 
-💡 How to Run
+## 💡 How to Run  
 
-Download or clone this repository:
-
+```bash
+# Clone the repository
 git clone https://github.com/siddharth-jain2214/GameVault.git
 
+# Navigate to the folder
+cd GameVault
 
-✨ Future Improvements
+# Open the main page in browser
+open index.html
+```
 
-Add more mini-games
+---
 
-Improve UI transitions and animations
+## ✨ Future Improvements  
 
-🧑‍💻 Author
+- Add more mini-games  
+- Will add daily challenge mode  
+- Improve UI transitions and animations  
 
-Siddharth Jain
-Simple. Creative. Passionate about Web Development.
+---
+
+## 🧑‍💻 Author  
+
+**Siddharth Jain**  
+Simple. Creative. Passionate about Web Development.  
