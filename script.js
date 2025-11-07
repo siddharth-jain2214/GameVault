@@ -1,4 +1,4 @@
-// Check if user is logged in
+
 function checkLogin() {
   const username = localStorage.getItem("currentUser");
   const authSection = document.getElementById("authSection");
@@ -15,22 +15,22 @@ function checkLogin() {
   }
 }
 
-// Logout function
+
 function logout() {
   localStorage.removeItem("currentUser");
 
-  // Reset stats to 0 immediately
+  
   document.getElementById("totalGames").textContent = "0";
   document.getElementById("totalScore").textContent = "0";
   document.getElementById("bestStreak").textContent = "0";
   document.getElementById("favoriteGame").textContent = "-";
 
-  // Update UI to show login button
+  
   document.getElementById("authSection").innerHTML =
     '<a href="login.html" class="login-btn">Login</a>';
 }
 
-// Load user stats from localStorage
+
 function loadStats() {
   const currentUser = localStorage.getItem("currentUser");
 
@@ -49,12 +49,10 @@ function loadStats() {
   const numberHistory = JSON.parse(
     localStorage.getItem(`${currentUser}_numberGameHistory`) || "[]"
   );
-  const reactionHistory = JSON.parse(
-    localStorage.getItem(`${currentUser}_reactionGameHistory`) || "[]"
-  );
+
 
   const totalGames =
-    memoryHistory.length + numberHistory.length + reactionHistory.length;
+    memoryHistory.length + numberHistory.length 
 
   const memoryScore = memoryHistory.reduce(
     (sum, game) => sum + (game.score || 0),
@@ -64,11 +62,8 @@ function loadStats() {
     (sum, game) => sum + (game.score || 0),
     0
   );
-  const reactionScore = reactionHistory.reduce(
-    (sum, game) => sum + (game.score || 0),
-    0
-  );
-  const totalScore = memoryScore + numberScore + reactionScore;
+  
+  const totalScore = memoryScore + numberScore;
 
   let bestStreak = 0;
   memoryHistory.forEach((game) => {
@@ -77,15 +72,13 @@ function loadStats() {
   numberHistory.forEach((game) => {
     if (game.attempts <= 7) bestStreak++;
   });
-  reactionHistory.forEach((game) => {
-    if (game.avgTime < 300) bestStreak++;
-  });
+  
 
   let favoriteGame = "-";
   const gameCounts = {
     Memory: memoryHistory.length,
     "Number Guess": numberHistory.length,
-    Reaction: reactionHistory.length,
+    
   };
 
   const maxGames = Math.max(...Object.values(gameCounts));
@@ -102,7 +95,7 @@ function loadStats() {
   document.getElementById("favoriteGame").textContent = favoriteGame;
 }
 
-// Game navigation
+
 function playGame(gameType) {
   const currentUser = localStorage.getItem("currentUser");
 
@@ -112,19 +105,17 @@ function playGame(gameType) {
     return;
   }
 
-  // Navigate to appropriate game page
+  
   if (gameType === "memory") {
     window.location.href = "memory-game.html";
   } else if (gameType === "number-guess") {
     window.location.href = "number-guess.html";
-  } else if (gameType === "reaction-time") {
-    window.location.href = "reaction-time.html";
-  } else {
+  }  else {
     alert("Game coming soon!");
   }
 }
 
-// Smooth scroll
+
 function initSmoothScroll() {
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener("click", function (e) {
@@ -137,12 +128,11 @@ function initSmoothScroll() {
   });
 }
 
-// Initialize page
 document.addEventListener("DOMContentLoaded", function () {
   checkLogin();
   loadStats();
   initSmoothScroll();
 });
 
-// Auto-refresh stats when user comes back from a game
+
 setInterval(loadStats, 3000);
