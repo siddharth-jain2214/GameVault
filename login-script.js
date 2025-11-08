@@ -1,15 +1,15 @@
-// Get all users from localStorage
+
 function getUsers() {
   const users = localStorage.getItem("gameVaultUsers");
   return users ? JSON.parse(users) : {};
 }
 
-// Save users to localStorage
+
 function saveUsers(users) {
   localStorage.setItem("gameVaultUsers", JSON.stringify(users));
 }
 
-// Check if already logged in
+
 function checkIfLoggedIn() {
   const currentUser = localStorage.getItem("currentUser");
   if (currentUser) {
@@ -22,12 +22,12 @@ function checkIfLoggedIn() {
 
 // Validate username
 function validateUsername(username) {
-  // Check if empty or only whitespace
+
   if (!username || username.trim().length === 0) {
     return { valid: false, error: "Username cannot be empty" };
   }
 
-  // Check length (3-20 characters)
+  
   if (username.length < 3) {
     return { valid: false, error: "Username must be at least 3 characters long" };
   }
@@ -35,7 +35,7 @@ function validateUsername(username) {
     return { valid: false, error: "Username cannot exceed 20 characters" };
   }
 
-  // Check for valid characters (alphanumeric, underscore, hyphen only)
+  
   const usernameRegex = /^[a-zA-Z0-9_-]+$/;
   if (!usernameRegex.test(username)) {
     return { valid: false, error: "Username can only contain letters, numbers, underscores, and hyphens" };
@@ -46,12 +46,12 @@ function validateUsername(username) {
     return { valid: false, error: "Username must start with a letter" };
   }
 
-  // Check for consecutive special characters
+  
   if (/[_-]{2,}/.test(username)) {
     return { valid: false, error: "Username cannot have consecutive underscores or hyphens" };
   }
 
-  // Reserved usernames
+  
   const reservedNames = ['admin', 'root', 'user', 'guest', 'system', 'null', 'undefined'];
   if (reservedNames.includes(username.toLowerCase())) {
     return { valid: false, error: "This username is reserved and cannot be used" };
@@ -82,27 +82,27 @@ function validatePassword(password) {
     return { valid: false, error: "Password must contain at least one uppercase letter" };
   }
 
-  // Check for at least one lowercase letter
+  
   if (!/[a-z]/.test(password)) {
     return { valid: false, error: "Password must contain at least one lowercase letter" };
   }
 
-  // Check for at least one number
+  
   if (!/[0-9]/.test(password)) {
     return { valid: false, error: "Password must contain at least one number" };
   }
 
-  // Check for at least one special character
+  
   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
     return { valid: false, error: "Password must contain at least one special character (!@#$%^&* etc.)" };
   }
 
-  // Check for spaces
+  
   if (/\s/.test(password)) {
     return { valid: false, error: "Password cannot contain spaces" };
   }
 
-  // Check for common weak passwords
+  
   const weakPasswords = ['password', 'password123', '12345678', 'qwerty123'];
   if (weakPasswords.some(weak => password.toLowerCase().includes(weak))) {
     return { valid: false, error: "Password is too common. Please choose a stronger password" };
